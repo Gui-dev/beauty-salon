@@ -7,6 +7,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      backgroundImage: {
+        login_bg: "url('./../assets/background_login.webp')",
+      },
       colors: {
         primary: '#348789',
         secondary: '#001489',
