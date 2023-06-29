@@ -9,6 +9,7 @@ module.exports = {
     extend: {
       backgroundImage: {
         login_bg: "url('./../assets/background_login.webp')",
+        register: "url('./../assets/cadastro.webp')",
       },
       colors: {
         primary: '#348789',
