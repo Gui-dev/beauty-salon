@@ -8,6 +8,7 @@ import {
   LoginValidationData,
   loginValidation,
 } from '@/validation/login-validation'
+import { Button } from './button'
 
 export const Form = () => {
   const {
@@ -24,25 +25,25 @@ export const Form = () => {
 
   return (
     <form
-      className="flex w-full flex-col gap-3 px-8"
+      className="flex w-full flex-col gap-3"
       onSubmit={handleSubmit(handleLogin)}
     >
       <Input
         type="text"
         label="email"
         placeholder="Email"
-        register={register}
+        {...register('email')}
         error={errors.email && errors.email.message}
       />
       <Input
         type="password"
         label="password"
         placeholder="Senha"
-        register={register}
+        {...register('password')}
         error={errors.password && errors.password.message}
       />
 
-      <button type="submit">Login</button>
+      <Button title="Entrar" />
     </form>
   )
 }

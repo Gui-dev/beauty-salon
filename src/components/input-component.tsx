@@ -1,16 +1,19 @@
-import { InputHTMLAttributes } from 'react'
-import { UseFormRegister } from 'react-hook-form'
+import {
+  ForwardRefRenderFunction,
+  InputHTMLAttributes,
+  forwardRef,
+} from 'react'
 import { AiOutlineMail } from 'react-icons/ai'
 
-import { LoginValidationData } from '@/validation/login-validation'
-
 interface IInputProps extends InputHTMLAttributes<HTMLInputElement> {
-  label: 'email' | 'password'
-  register: UseFormRegister<LoginValidationData>
+  label: string
   error: string | undefined
 }
 
-export const Input = ({ label, register, error, ...data }: IInputProps) => {
+const InputBase: ForwardRefRenderFunction<HTMLInputElement, IInputProps> = (
+  { label, error, ...data },
+  ref,
+) => {
   return (
     <div className="flex w-full flex-col items-center rounded-lg">
       <label htmlFor={label} className="relative flex w-full items-center">
@@ -18,9 +21,9 @@ export const Input = ({ label, register, error, ...data }: IInputProps) => {
           <AiOutlineMail size={20} />
         </i>
         <input
-          className="w-full rounded-lg border border-gray-50 bg-white px-9  py-3"
+          className="w-full rounded-lg border border-gray-50 bg-white px-9 py-3"
           id={label}
-          {...register(label)}
+          ref={ref}
           {...data}
         />
       </label>
@@ -32,3 +35,5 @@ export const Input = ({ label, register, error, ...data }: IInputProps) => {
     </div>
   )
 }
+
+export const Input = forwardRef(InputBase)

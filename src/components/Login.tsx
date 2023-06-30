@@ -1,9 +1,10 @@
 import Image from 'next/image'
+import Link from 'next/link'
 
 import logo from '@/assets/logo.webp'
 import { Form } from './form-login'
 
-export default function Login() {
+export const Login = () => {
   return (
     <div className="flex min-h-screen items-center justify-end bg-black bg-login_bg bg-cover bg-no-repeat">
       <div className="flex w-[50%] flex-col flex-wrap px-4">
@@ -15,6 +16,12 @@ export default function Login() {
             Olá, seja bem vindo!
           </h1>
           <Form />
+          <Link
+            href="/register"
+            className="mt-4 font-sans text-sm font-bold text-white hover:underline"
+          >
+            Não tem uma conta? criar uma conta
+          </Link>
         </div>
       </div>
     </div>
