@@ -2,6 +2,8 @@
 
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { AiOutlineMail } from 'react-icons/ai'
+import { BsKey } from 'react-icons/bs'
 
 import { Input } from './input-component'
 import {
@@ -32,6 +34,7 @@ export const Form = () => {
         type="text"
         label="email"
         placeholder="Email"
+        icon={AiOutlineMail}
         {...register('email')}
         error={errors.email && errors.email.message}
       />
@@ -39,6 +42,7 @@ export const Form = () => {
         type="password"
         label="password"
         placeholder="Senha"
+        icon={BsKey}
         {...register('password')}
         error={errors.password && errors.password.message}
       />
