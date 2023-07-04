@@ -1,6 +1,7 @@
 import { ReactNode } from 'react'
 import './globals.css'
 import { Poppins } from 'next/font/google'
+import 'react-toastify/dist/ReactToastify.css'
 
 const poppins = Poppins({
   subsets: ['latin'],
