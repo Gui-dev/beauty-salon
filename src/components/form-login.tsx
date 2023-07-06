@@ -11,8 +11,10 @@ import {
   loginValidation,
 } from '@/validation/login-validation'
 import { Button } from './button'
+import { useAuth } from '@/hooks/auth'
 
 export const Form = () => {
+  const { isLoading, signIn } = useAuth()
   const {
     register,
     handleSubmit,
@@ -22,7 +24,7 @@ export const Form = () => {
   })
 
   const handleLogin = ({ email, password }: LoginValidationData) => {
-    console.log(email, password)
+    signIn({ email, password })
   }
 
   return (
@@ -47,7 +49,7 @@ export const Form = () => {
         error={errors.password && errors.password.message}
       />
 
-      <Button title="Entrar" />
+      <Button title="Entrar" isLoading={isLoading} />
     </form>
   )
 }
