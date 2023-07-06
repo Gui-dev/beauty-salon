@@ -28,6 +28,9 @@ const InputBase: ForwardRefRenderFunction<HTMLInputElement, IInputProps> = (
           {...data}
         />
       </label>
+      {error && (
+        <span className="mt-2 self-start text-sm text-red-500">{error}</span>
+      )}
     </div>
   )
 }
