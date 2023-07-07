@@ -12,7 +12,10 @@ module.exports = {
         register: "url('./../assets/cadastro.webp')",
       },
       colors: {
-        primary: '#348789',
+        primary: {
+          800: '#64A2A4',
+          900: '#348789',
+        },
         secondary: '#001489',
         gray: {
           50: '#DDDFEB',
