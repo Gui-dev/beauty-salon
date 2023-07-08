@@ -27,7 +27,7 @@ interface ISignInProps {
 interface IAuthContextProps {
   user: IUserProps | null
   signIn: (data: ISignInProps) => Promise<void>
-  signOut: () => void
+  signOut: () => Promise<void>
   isLoading: boolean
 }
 
@@ -67,13 +67,14 @@ export const AuthProvider = ({ children }: IAuthProviderProps) => {
     }
   }
 
-  const signOut = () => {
-    cookies.remove('beauty:token')
-    cookies.remove('beauty:refresh_token')
-    cookies.remove('beauty:user')
+  const signOut = async () => {
+    cookies.remove('beauty_token')
+    cookies.remove('beauty_refresh_token')
+    cookies.remove('beauty_user')
     setUser(null)
     router.push('/')
   }
+
   return (
     <AuthContext.Provider
       value={{
