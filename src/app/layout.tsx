@@ -2,6 +2,7 @@ import { ReactNode } from 'react'
 import './globals.css'
 import { Poppins } from 'next/font/google'
 import 'react-toastify/dist/ReactToastify.css'
+import { AuthProvider } from '@/contexts/auth-context'
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -17,7 +18,9 @@ export const metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body className={poppins.className}>{children}</body>
+      <body className={poppins.className}>
+        <AuthProvider>{children}</AuthProvider>
+      </body>
     </html>
   )
 }
