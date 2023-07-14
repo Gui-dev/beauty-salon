@@ -3,6 +3,23 @@
 @tailwind utilities;
 
 body {
+  background: '#DDDFEB';
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+.today {
+  @apply bg-green-600 text-white font-bold w-10 h-10 m-1 rounded-md !important
+}
+
+.day:not(.disabled) {
+  @apply bg-white text-gray-900 w-10 h-10 m-1 rounded-md
+}
+
+.day.disabled {
+  @apply bg-gray-200 !important
+}
+
+.selected {
+  @apply text-white bg-secondary !important
 }
