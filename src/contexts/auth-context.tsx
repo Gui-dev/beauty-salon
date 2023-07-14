@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactNode, createContext, useState } from 'react'
+import { ReactNode, createContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
 import { AxiosError } from 'axios'
@@ -9,12 +9,14 @@ import cookies from 'js-cookie'
 import { api } from '@/services/api'
 
 interface IUserProps {
-  user: {
-    id: string
-    name: string
-    email: string
-    avatar_url: string
-  }
+  id: string
+  name: string
+  email: string
+  avatar_url: string
+}
+
+interface ISignResponse {
+  user: IUserProps | null
   token: string
   refresh_token: string
 }
@@ -42,17 +44,26 @@ export const AuthProvider = ({ children }: IAuthProviderProps) => {
   const [user, setUser] = useState<IUserProps | null>(null)
   const [isLoading, setIsLoading] = useState(false)
 
+  useEffect(() => {
+    const data = cookies.get('beauty_user')
+    const user = data ? JSON.parse(data) : null
+    if (!user) {
+      setUser(null)
+    }
+    setUser(user)
+  }, [])
+
   const signIn = async ({ email, password }: ISignInProps) => {
     try {
       setIsLoading(true)
-      const { data } = await api.post<IUserProps>('/users/login', {
+      const { data } = await api.post<ISignResponse>('/users/login', {
         email,
         password,
       })
       cookies.set('beauty_token', data.token)
       cookies.set('beauty_refresh_token', data.refresh_token)
       cookies.set('beauty_user', JSON.stringify(data.user))
-      setUser(data)
+      setUser(data.user)
       toast.success(`💚 Usuário \nlogado com sucesso`)
       router.push('/dashboard')
     } catch (error) {
