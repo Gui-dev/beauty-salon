@@ -15,6 +15,14 @@ interface IUserProps {
   avatar_url: string
 }
 
+interface ISchedulesParams {
+  id: string
+  user_id: string
+  name: string
+  phone: string
+  date: string
+}
+
 interface ISignResponse {
   user: IUserProps | null
   token: string
@@ -28,9 +36,13 @@ interface ISignInProps {
 
 interface IAuthContextProps {
   user: IUserProps | null
+  schedules: ISchedulesParams[]
+  date: Date
+  isLoading: boolean
+  availableSchedules: Array<string>
+  handleSetDate: (date: Date) => void
   signIn: (data: ISignInProps) => Promise<void>
   signOut: () => Promise<void>
-  isLoading: boolean
 }
 
 interface IAuthProviderProps {
@@ -42,7 +54,21 @@ export const AuthContext = createContext({} as IAuthContextProps)
 export const AuthProvider = ({ children }: IAuthProviderProps) => {
   const router = useRouter()
   const [user, setUser] = useState<IUserProps | null>(null)
+  const [schedules, setSchedules] = useState<ISchedulesParams[]>([])
+  const [date, setDate] = useState<Date>(new Date())
   const [isLoading, setIsLoading] = useState(false)
+  const availableSchedules = [
+    '09',
+    '10',
+    '11',
+    '12',
+    '13',
+    '14',
+    '15',
+    '16',
+    '17',
+    '18',
+  ]
 
   useEffect(() => {
     const data = cookies.get('beauty_user')
@@ -52,6 +78,21 @@ export const AuthProvider = ({ children }: IAuthProviderProps) => {
     }
     setUser(user)
   }, [])
+
+  useEffect(() => {
+    api
+      .get('/schedules')
+      .then((response) => {
+        setSchedules(response.data)
+      })
+      .catch((error) => {
+        console.log('ERROR: ', error)
+      })
+  }, [date])
+
+  const handleSetDate = (date: Date) => {
+    setDate(date)
+  }
 
   const signIn = async ({ email, password }: ISignInProps) => {
     try {
@@ -64,7 +105,7 @@ export const AuthProvider = ({ children }: IAuthProviderProps) => {
       cookies.set('beauty_refresh_token', data.refresh_token)
       cookies.set('beauty_user', JSON.stringify(data.user))
       setUser(data.user)
-      toast.success(`💚 Usuário \nlogado com sucesso`)
+      toast.success(`💚 Usuário logado com sucesso`)
       router.push('/dashboard')
     } catch (error) {
       const err = error as AxiosError
@@ -90,9 +131,13 @@ export const AuthProvider = ({ children }: IAuthProviderProps) => {
     <AuthContext.Provider
       value={{
         user,
+        schedules,
+        date,
+        availableSchedules,
+        isLoading,
+        handleSetDate,
         signIn,
         signOut,
-        isLoading,
       }}
     >
       {children}
