@@ -91,7 +91,12 @@ export const FormRegister = () => {
         error={errors.confirm_password && errors.confirm_password.message}
       />
 
-      <Button title="Cadastrar" isLoading={isLoading} />
+      <Button
+        type="submit"
+        title="Cadastrar"
+        isLoading={isLoading}
+        isPrimary={true}
+      />
     </form>
   )
 }

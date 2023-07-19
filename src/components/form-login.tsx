@@ -23,8 +23,8 @@ export const Form = () => {
     resolver: zodResolver(loginValidation),
   })
 
-  const handleLogin = ({ email, password }: LoginValidationData) => {
-    signIn({ email, password })
+  const handleLogin = async ({ email, password }: LoginValidationData) => {
+    await signIn({ email, password })
   }
 
   return (
@@ -49,7 +49,12 @@ export const Form = () => {
         error={errors.password && errors.password.message}
       />
 
-      <Button title="Entrar" isLoading={isLoading} />
+      <Button
+        type="submit"
+        title="Entrar"
+        isLoading={isLoading}
+        isPrimary={true}
+      />
     </form>
   )
 }
