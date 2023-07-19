@@ -11,7 +11,7 @@ const token = cookies.get('beauty_token')
 export const api = axios.create({
   baseURL: 'http://192.168.0.102:3333',
 })
-
+const isRefreshing = false
 const refreshSubscribers: Array<(token: string) => void> = []
 let failedRequest: Array<IRequestConfig> = []
 
@@ -29,29 +29,35 @@ api.interceptors.response.use(
         error.response.data &&
         error.response.data.error === 'Token exprired'
       ) {
-        try {
-          const refresh = cookies.get('beauty_refresh_token')
-          const { data } = await api.post('/users/refresh', {
-            refresh_token: refresh,
-          })
-          const { token, refresh_token } = data
-          cookies.set('beauty_refresh_token', refresh_token)
-          onRefreshed(token)
-          if (originalRequest?.headers) {
-            originalRequest.headers.Authorization = `Bearer: ${token}`
+        if (!isRefreshing) {
+          try {
+            const refresh = cookies.get('beauty_refresh_token')
+            const { data } = await api.post('/users/refresh', {
+              refresh_token: refresh,
+            })
+            const { token, refresh_token } = data
+            cookies.set('beauty_token', token)
+            cookies.set('beauty_refresh_token', refresh_token)
+            onRefreshed(token)
+            if (originalRequest?.headers) {
+              originalRequest.headers.Authorization = `Bearer: ${token}`
+            }
+            return axios(originalRequest)
+          } catch (error) {
+            failedRequest.forEach((request) => {
+              request.onFailure?.(error as AxiosError)
+            })
+            failedRequest = []
           }
-          return axios(originalRequest)
-        } catch (error) {
-          failedRequest.forEach((request) => {
-            request.onFailure?.(error as AxiosError)
-          })
-          failedRequest = []
         }
+        return new Promise((resolve, reject) => {
+          failedRequest.push({
+            ...originalRequest,
+            onSuccess: (response) => resolve(response),
+            onFailure: (error) => reject(error),
+          })
+        })
       }
-    } else {
-      cookies.remove('beauty_token')
-      cookies.remove('beauty_refresh_token')
-      cookies.remove('beauty_user')
     }
 
     return Promise.reject(error)

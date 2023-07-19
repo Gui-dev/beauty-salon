@@ -1,30 +1,19 @@
 'use client'
 
 import { DayPicker } from 'react-day-picker'
-import { useEffect, useMemo, useState } from 'react'
-import { format } from 'date-fns'
+import { useEffect, useState } from 'react'
+import { format, isToday } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 
 import { Header } from '@/components/header'
 import { Card } from '@/components/card'
 import { useAuth } from '@/hooks/auth'
-import { api } from '@/services/api'
 
 import 'react-day-picker/dist/style.css'
 
-interface ISchedulesParams {
-  id: string
-  user_id: string
-  name: string
-  phone: string
-  date: string
-}
-
 export default function Dashboard() {
-  const { user } = useAuth()
+  const { user, date, handleSetDate, schedules } = useAuth()
   const [selected, setSelected] = useState<Date>()
-  const today = useMemo(() => new Date(), [])
-  const [schedules, setSchedules] = useState<ISchedulesParams[]>([])
 
   let footer = <p className="text-sm text-gray-400">Selecione uma data</p>
   if (selected) {
@@ -36,15 +25,11 @@ export default function Dashboard() {
   }
 
   useEffect(() => {
-    api
-      .get('/schedules')
-      .then((response) => {
-        setSchedules(response.data)
-      })
-      .catch((error) => {
-        console.log('ERROR: ', error)
-      })
-  }, [selected, today])
+    if (selected) {
+      handleSetDate(selected)
+    }
+  }, [handleSetDate, selected])
+
   return (
     <div className="w-screen">
       <div>
@@ -55,9 +40,8 @@ export default function Dashboard() {
           </h2>
           <p className="text-base text-gray-600">
             Esta é sua lista de horário para o dia{' '}
-            {selected
-              ? format(selected, 'dd/MM/yyyy', { locale: ptBR })
-              : format(today, 'dd/MM/yyyy', { locale: ptBR })}
+            {isToday(date) ? 'de hoje' : ''}{' '}
+            {format(date, 'dd/MM/yyyy', { locale: ptBR })}
           </p>
         </div>
 
@@ -77,7 +61,7 @@ export default function Dashboard() {
               <DayPicker
                 locale={ptBR}
                 mode="single"
-                selected={selected}
+                selected={date}
                 onSelect={setSelected}
                 disabled={[{ before: new Date() }, { dayOfWeek: [0] }]}
                 fromMonth={new Date()}
