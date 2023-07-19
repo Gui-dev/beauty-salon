@@ -1,8 +1,10 @@
+import { useState } from 'react'
 import { RiDeleteBinLine } from 'react-icons/ri'
 import { AiOutlineEdit } from 'react-icons/ai'
-import Link from 'next/link'
 import colors from 'tailwindcss/colors'
 import { getHours, isAfter, parseISO } from 'date-fns'
+import { ModalEdit } from './modal-edit'
+import { toast } from 'react-toastify'
 
 interface ICardProps {
   id: string
@@ -20,24 +22,43 @@ export const Card = ({ id, name, phone, date }: ICardProps) => {
   const hour = getHours(dateParsed)
   let phoneFormatted = phone.replace(/\D/g, '')
   phoneFormatted = phoneFormatted.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3')
+  const [openModal, setOpenModal] = useState(false)
+
+  const handleOpenModal = () => {
+    if (isAfterDate) {
+      setOpenModal(!openModal)
+    } else {
+      toast.warning('Opsss, não pode editar esse horário')
+    }
+  }
 
   return (
-    <div className="mb-6 flex items-center justify-between rounded-lg bg-white shadow-lg">
-      <div className="flex flex-row items-center gap-4">
-        <span className={isAfterDate}>{hour}h</span>
-        <div className="flex flex-col gap-1">
-          <p className="text-base text-primary-900">{name}</p>
-          <p className="text-xs text-primary-800">{phoneFormatted}</p>
+    <>
+      <div className="mb-6 flex items-center justify-between rounded-lg bg-white shadow-lg">
+        <div className="flex flex-row items-center gap-4">
+          <span className={isAfterDate}>{hour}h</span>
+          <div className="flex flex-col gap-1">
+            <p className="text-base text-primary-900">{name}</p>
+            <p className="text-xs text-primary-800">{phoneFormatted}</p>
+          </div>
+        </div>
+        <div className="mr-3 flex flex-row items-center gap-4">
+          <button onClick={handleOpenModal}>
+            <AiOutlineEdit size={20} color={colors.green[800]} />
+          </button>
+          <button>
+            <RiDeleteBinLine size={20} color={colors.red[800]} />
+          </button>
         </div>
       </div>
-      <div className="mr-3 flex flex-row items-center gap-4">
-        <Link href={`/schedules/${id}`}>
-          <AiOutlineEdit size={20} color={colors.green[800]} />
-        </Link>
-        <button>
-          <RiDeleteBinLine size={20} color={colors.red[800]} />
-        </button>
-      </div>
-    </div>
+      {openModal && (
+        <ModalEdit
+          onCloseModal={handleOpenModal}
+          id={id}
+          name={name}
+          hour={hour}
+        />
+      )}
+    </>
   )
 }
