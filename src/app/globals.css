@@ -8,6 +8,14 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+::-webkit-calendar-picker-indicator {
+  background-color: '#DDDFEB';
+  padding: 5px;
+  cursor: pointer;
+  border-radius: 3px;
+  box-shadow: 1px 2px 4px rgba(0, 0, 0, .4);
+}
+
 .today {
   @apply bg-green-600 text-white font-bold w-10 h-10 m-1 rounded-md !important
 }
