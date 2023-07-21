@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { RiDeleteBinLine } from 'react-icons/ri'
 import { AiOutlineEdit } from 'react-icons/ai'
+import { toast } from 'react-toastify'
 import colors from 'tailwindcss/colors'
 import { getHours, isAfter, parseISO } from 'date-fns'
+
 import { ModalEdit } from './modal-edit'
-import { toast } from 'react-toastify'
+import { api } from '@/services/api'
 
 interface ICardProps {
   id: string
@@ -32,6 +34,17 @@ export const Card = ({ id, name, phone, date }: ICardProps) => {
     }
   }
 
+  const handleDeleteSchedule = async () => {
+    try {
+      if (isAfterDate) {
+        await api.delete(`/schedules/${id}`)
+        toast.info('Deletado com sucesso')
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return (
     <>
       <div className="mb-6 flex items-center justify-between rounded-lg bg-white shadow-lg">
@@ -46,7 +59,7 @@ export const Card = ({ id, name, phone, date }: ICardProps) => {
           <button onClick={handleOpenModal}>
             <AiOutlineEdit size={20} color={colors.green[800]} />
           </button>
-          <button>
+          <button onClick={handleDeleteSchedule}>
             <RiDeleteBinLine size={20} color={colors.red[800]} />
           </button>
         </div>
