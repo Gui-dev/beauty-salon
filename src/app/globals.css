@@ -8,8 +8,12 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+input[type=date] {
+  color: #64A2A4;
+}
+
 ::-webkit-calendar-picker-indicator {
-  background-color: '#DDDFEB';
+  background-color: #ccf2f4;
   padding: 5px;
   cursor: pointer;
   border-radius: 3px;
