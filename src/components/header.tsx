@@ -39,10 +39,10 @@ export const Header = () => {
         {openDropMenu && (
           <ul className="absolute -right-3 top-[95%] flex flex-col gap-2 rounded-sm bg-primary-900 text-center text-white shadow-xl transition-all">
             <li className="rounded-sm px-5 py-2 hover:bg-primary-800">
-              <Link href="/dashborad">Agendamento</Link>
+              <Link href="/schedules">Agendamento</Link>
             </li>
             <li className="rounded-sm px-5 py-2 hover:bg-primary-800">
-              <Link href="/dashborad">Ediatr Perfil</Link>
+              <Link href="/profile">Editar Perfil</Link>
             </li>
             <li>
               <button
