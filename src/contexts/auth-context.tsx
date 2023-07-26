@@ -81,7 +81,11 @@ export const AuthProvider = ({ children }: IAuthProviderProps) => {
 
   useEffect(() => {
     api
-      .get('/schedules')
+      .get('/schedules', {
+        params: {
+          date: new Date(date),
+        },
+      })
       .then((response) => {
         setSchedules(response.data)
       })
