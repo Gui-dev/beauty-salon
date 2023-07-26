@@ -1,5 +1,6 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
@@ -10,8 +11,11 @@ import {
 } from '@/validation/edit-profile-validation'
 import { Input } from '@/components/input-component'
 import { Button } from '@/components/button'
+import { api } from '@/services/api'
+import { toast } from 'react-toastify'
 
 export const EditProfileForm = () => {
+  const router = useRouter()
   const { user } = useAuth()
   const {
     register,
@@ -21,8 +25,21 @@ export const EditProfileForm = () => {
     resolver: zodResolver(editProfileValidation),
   })
 
-  const handleUpdateProfile = async (data: EditProfileValidationData) => {
-    console.log(data)
+  const handleUpdateProfile = async ({
+    password,
+    confirm_password,
+  }: EditProfileValidationData) => {
+    try {
+      await api.put('/users/reset-password', {
+        password,
+        confirm_password,
+      })
+      toast.success('Senha redefinida com sucesso')
+      router.push('/dashboard')
+      console.log(password, confirm_password)
+    } catch (error) {
+      toast.success('Erro ao tentar redefinir a senha, tente mais tarde')
+    }
   }
 
   return (
