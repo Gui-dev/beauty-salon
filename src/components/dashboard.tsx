@@ -8,11 +8,13 @@ import { ptBR } from 'date-fns/locale'
 import { Header } from '@/components/header'
 import { Card } from '@/components/card'
 import { useAuth } from '@/hooks/auth'
+import { useSchedule } from '@/hooks/schedule'
 
 import 'react-day-picker/dist/style.css'
 
 export default function Dashboard() {
-  const { user, date, handleSetDate, schedules } = useAuth()
+  const { user } = useAuth()
+  const { date, handleSetDate, schedules } = useSchedule()
   const [selected, setSelected] = useState<Date>()
 
   let footer = <p className="text-sm text-gray-400">Selecione uma data</p>
