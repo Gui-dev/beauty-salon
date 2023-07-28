@@ -35,8 +35,7 @@ export const EditProfileForm = () => {
         confirm_password,
       })
       toast.success('Senha redefinida com sucesso')
-      router.push('/dashboard')
-      console.log(password, confirm_password)
+      router.push('/')
     } catch (error) {
       toast.success('Erro ao tentar redefinir a senha, tente mais tarde')
     }
