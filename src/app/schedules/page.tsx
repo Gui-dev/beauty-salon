@@ -1,6 +1,6 @@
 'use client'
 
-import { ChangeEvent } from 'react'
+import { ChangeEvent, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
 import { formatISO, getHours, parseISO, setHours } from 'date-fns'
@@ -14,12 +14,14 @@ import {
   CreateScheduleValidationData,
   createScheduleValidation,
 } from '@/validation/create-schedule-validation'
-import { useAuth } from '@/hooks/auth'
+import { useSchedule } from '@/hooks/schedule'
 import { api } from '@/services/api'
 
 export default function Schedules() {
   const router = useRouter()
-  const { availableSchedules, date, handleSetDate, schedules } = useAuth()
+  const { availableSchedules, date, handleSetDate, loadSchedules, schedules } =
+    useSchedule()
+  const [isLoading, setIsLoading] = useState(false)
   const {
     register,
     handleSubmit,
@@ -48,6 +50,7 @@ export default function Schedules() {
     hour,
   }: CreateScheduleValidationData) => {
     try {
+      setIsLoading(true)
       const dateFormatted = formatISO(setHours(new Date(date), Number(hour)))
       await api.post('/schedules', {
         name,
@@ -55,9 +58,12 @@ export default function Schedules() {
         date: dateFormatted,
       })
       toast.success('Horário marcado com sucesso')
-      router.push('/dashboard')
+      router.push('/')
+      loadSchedules()
     } catch (error) {
       toast.error('Erro ao tentar marcar o horário')
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -118,7 +124,7 @@ export default function Schedules() {
 
           <div className="flex flex-row items-center justify-center gap-4">
             <Button title="Cancelar" />
-            <Button title="Agendar" isPrimary={true} />
+            <Button title="Agendar" isPrimary={true} isLoading={isLoading} />
           </div>
         </form>
       </div>

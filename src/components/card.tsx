@@ -7,6 +7,7 @@ import { getHours, isAfter, parseISO } from 'date-fns'
 
 import { ModalEdit } from './modal-edit'
 import { api } from '@/services/api'
+import { useSchedule } from '@/hooks/schedule'
 
 interface ICardProps {
   id: string
@@ -17,6 +18,7 @@ interface ICardProps {
 }
 
 export const Card = ({ id, name, phone, date }: ICardProps) => {
+  const { loadSchedules } = useSchedule()
   const dateParsed = parseISO(date)
   const isAfterDate = isAfter(dateParsed, new Date())
     ? 'flex items-center justify-center w-16 rounded-l-lg bg-secondary p-3 text-sm font-bold text-white'
@@ -39,6 +41,7 @@ export const Card = ({ id, name, phone, date }: ICardProps) => {
       if (isAfterDate) {
         await api.delete(`/schedules/${id}`)
         toast.info('Deletado com sucesso')
+        loadSchedules()
       }
     } catch (error) {
       console.log(error)

@@ -2,11 +2,11 @@ import { ChangeEvent, FormEvent, useState } from 'react'
 import { AiOutlineClose } from 'react-icons/ai'
 import colors from 'tailwindcss/colors'
 
-import { useAuth } from '@/hooks/auth'
 import { Button } from './button'
 import { formatISO, getHours, parseISO, setHours } from 'date-fns'
 import { api } from '@/services/api'
 import { toast } from 'react-toastify'
+import { useSchedule } from '@/hooks/schedule'
 
 interface IModalEdit {
   id: string
@@ -16,7 +16,8 @@ interface IModalEdit {
 }
 
 export const ModalEdit = ({ id, name, hour, onCloseModal }: IModalEdit) => {
-  const { availableSchedules, date, handleSetDate, schedules } = useAuth()
+  const { availableSchedules, date, handleSetDate, loadSchedules, schedules } =
+    useSchedule()
   const [changedHour, setChangedHour] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const currentDate = new Date().toISOString().split('T')[0]
@@ -46,6 +47,8 @@ export const ModalEdit = ({ id, name, hour, onCloseModal }: IModalEdit) => {
         date: dateFormatted,
       })
       toast.success('Horario atualizado com sucesso')
+      onCloseModal()
+      loadSchedules()
     } catch (error) {
       toast.error('Erro ao tentar atualizar, tente mais tarde')
       console.log(error)
