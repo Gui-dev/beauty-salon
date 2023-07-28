@@ -3,7 +3,8 @@ import { ToastContainer } from 'react-toastify'
 import './globals.css'
 import { Poppins } from 'next/font/google'
 import 'react-toastify/dist/ReactToastify.css'
-import { AuthProvider } from '@/contexts/auth-context'
+
+import { ContextProviders } from '@/contexts/'
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -20,10 +21,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body className={poppins.className}>
-        <AuthProvider>
+        <ContextProviders>
           <ToastContainer theme="dark" position="top-right" />
           {children}
-        </AuthProvider>
+        </ContextProviders>
       </body>
     </html>
   )

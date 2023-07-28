@@ -15,14 +15,6 @@ interface IUserProps {
   avatar_url: string
 }
 
-interface ISchedulesParams {
-  id: string
-  user_id: string
-  name: string
-  phone: string
-  date: string
-}
-
 interface ISignResponse {
   user: IUserProps | null
   token: string
@@ -36,11 +28,7 @@ interface ISignInProps {
 
 interface IAuthContextProps {
   user: IUserProps | null
-  schedules: ISchedulesParams[]
-  date: Date
   isLoading: boolean
-  availableSchedules: Array<string>
-  handleSetDate: (date: Date) => void
   signIn: (data: ISignInProps) => Promise<void>
   signOut: () => Promise<void>
 }
@@ -54,49 +42,30 @@ export const AuthContext = createContext({} as IAuthContextProps)
 export const AuthProvider = ({ children }: IAuthProviderProps) => {
   const router = useRouter()
   const [user, setUser] = useState<IUserProps | null>(null)
-  const [schedules, setSchedules] = useState<ISchedulesParams[]>([])
-  const [date, setDate] = useState<Date>(new Date())
-  const [isLoading, setIsLoading] = useState(false)
-  const availableSchedules = [
-    '09',
-    '10',
-    '11',
-    '12',
-    '13',
-    '14',
-    '15',
-    '16',
-    '17',
-    '18',
-  ]
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const data = cookies.get('beauty_user')
-    const user = data ? JSON.parse(data) : null
-    if (!user) {
-      setUser(null)
+    try {
+      setIsLoading(true)
+      const data = cookies.get('beauty_user')
+      const token = cookies.get('beauty_token')
+      const user = data ? JSON.parse(data) : null
+      if (!user) {
+        setUser(null)
+      }
+      setUser(user)
+      if (token) {
+        api.interceptors.request.use((config) => {
+          config.headers.Authorization = `Bearer ${token}`
+          return config
+        })
+      }
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setIsLoading(false)
     }
-    setUser(user)
   }, [])
-
-  useEffect(() => {
-    api
-      .get('/schedules', {
-        params: {
-          date: new Date(date),
-        },
-      })
-      .then((response) => {
-        setSchedules(response.data)
-      })
-      .catch((error) => {
-        console.log('ERROR: ', error)
-      })
-  }, [date])
-
-  const handleSetDate = (date: Date) => {
-    setDate(date)
-  }
 
   const signIn = async ({ email, password }: ISignInProps) => {
     try {
@@ -110,7 +79,7 @@ export const AuthProvider = ({ children }: IAuthProviderProps) => {
       cookies.set('beauty_user', JSON.stringify(data.user))
       setUser(data.user)
       toast.success(`💚 Usuário logado com sucesso`)
-      router.push('/dashboard')
+      router.push('/')
     } catch (error) {
       const err = error as AxiosError
       if (err.response?.status === 401) {
@@ -135,11 +104,7 @@ export const AuthProvider = ({ children }: IAuthProviderProps) => {
     <AuthContext.Provider
       value={{
         user,
-        schedules,
-        date,
-        availableSchedules,
         isLoading,
-        handleSetDate,
         signIn,
         signOut,
       }}
